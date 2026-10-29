@@ -1,21 +1,18 @@
 package com.back;
 
+import java.util.Arrays;
+
 public class Calc {
     public static int run(String expression) {
         expression = expression.replaceAll(" - ", " + -");
 
         String[] expressionBits = expression.split(" \\+ ");
 
-        int num1 = Integer.parseInt(expressionBits[0]);
-        int num2 = Integer.parseInt(expressionBits[1]);
+        int sum = Arrays.stream(expressionBits)
+                .map(Integer::parseInt)
+                .reduce((a, b) -> a + b)
+                .orElse(0);
 
-        return num1 + num2;
-
-
-
-
-
-
-
+        return sum;
     }
 }
