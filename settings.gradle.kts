@@ -1,0 +1,1 @@
+rootProject.name = "tdd-calculator-1"
