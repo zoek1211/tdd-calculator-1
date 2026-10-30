@@ -40,7 +40,7 @@ public class Calc {
 
     private static String removeUnnecessaryBrackets(String expression) {
         if (expression.startsWith("(") && expression.endsWith(")")) {
-            return expression.substring(1, expression.length() - 1);
+            return removeUnnecessaryBrackets(expression.substring(1, expression.length() - 1));
         }
         return expression;
     }
