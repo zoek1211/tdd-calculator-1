@@ -9,7 +9,7 @@ public class Calc {
 
             int sum = Arrays.stream(expressionBits)
                     .map(Calc::run) // run 재귀호출
-                    .reduce((a, b) -> a + b)
+                    .reduce(Integer::sum)
                     .orElse(0);
             return sum;
         }
@@ -25,13 +25,18 @@ public class Calc {
             return product;
         }
 
-        expression = expression.replaceAll(" - ", " + -");
+        expression = expression.replace(" - ", " + -");
 
         String[] expressionBits = expression.split(" \\+ ");
 
         int sum = Arrays.stream(expressionBits)
                 .mapToInt(Integer::parseInt)
                 .sum();
+
+//        int sum = Arrays.stream(expressionBits)
+//                .map(Integer::parseInt)
+//                .reduce((a, b) -> a + b)
+//                .orElse(0);
 
         return sum;
     }
