@@ -12,22 +12,13 @@ public class Calc {
             String[] expressionBits = splitTwoPartsBy(expression, '+');
 
             if  (expressionBits != null) {
-                int sum = Arrays.stream(expressionBits)
-                        .map(Calc::run) // run 재귀호출
-                        .reduce(Integer::sum)
-                        .orElse(0);
-                return sum;
+                return run(expressionBits[0]) + run(expressionBits[1]);
             }
 
             expressionBits = splitTwoPartsBy(expression, '*');
 
             if (expressionBits != null) {
-                int product = Arrays.stream(expressionBits)
-                        .map(Calc::run)
-                        .reduce((a, b) -> a * b)
-                        .orElse(0);
-
-                return product;
+                return run(expressionBits[0]) * run(expressionBits[1]);
             }
             throw new IllegalArgumentException("Invalid expression: " + expression);
         }
@@ -45,21 +36,18 @@ public class Calc {
         if (expression.contains(" * ")) {
             String[] expressionBits = expression.split(" \\* ");
 
-            int product = Arrays.stream(expressionBits)
-                .map(Integer::parseInt)
-                .reduce((a, b) -> a * b)
-                .orElse(0);
-
-            return product;
+            return Arrays.stream(expressionBits)
+                    .map(Integer::parseInt)
+                    .reduce((a, b) -> a * b)
+                    .orElse(0);
         }
 
         String[] expressionBits = expression.split(" \\+ ");
 
-        int sum = Arrays.stream(expressionBits)
-                .mapToInt(Integer::parseInt)
-                .sum();
-
-        return sum;
+        return Arrays.stream(expressionBits)
+                .map(Integer::parseInt)
+                .reduce(Integer::sum)
+                .orElse(0);
     }
 
     private static String[] splitTwoPartsBy(String expression, char splitBy) {
