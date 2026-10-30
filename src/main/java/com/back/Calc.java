@@ -23,6 +23,7 @@ public class Calc {
         }
 
         expression = removeUnnecessaryBrackets(expression);
+        expression = transformMinusOuterBracketToPlus(expression);
         expression = expression.replace(" - ", " + -");
 
         if (isDebug) {
@@ -88,6 +89,13 @@ public class Calc {
         printRsOnDebugMode(rs, depth);
 
         return rs;
+    }
+
+    private static String transformMinusOuterBracketToPlus(String expression) {
+        if (expression.startsWith("-(") && expression.endsWith(")")) {
+            return expression.substring(1, expression.length()) + " * -1";
+        }
+        return expression;
     }
 
     private static String[] splitTwoPartsBy(String expression, char splitBy) {
