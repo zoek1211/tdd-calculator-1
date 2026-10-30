@@ -4,7 +4,22 @@ import java.util.Arrays;
 
 public class Calc {
     public static int run(String expression) {
+        expression = expression.trim();
         expression = removeUnnecessaryBrackets(expression);
+        expression = expression.replace(" - ", " + -");
+
+        if (expression.contains("(")) {
+            String[] expressionBits = splitTwoParts(expression);
+
+            int sum = Arrays.stream(expressionBits)
+                    .map(Calc::run) // run 재귀호출
+                    .reduce(Integer::sum)
+                    .orElse(0);
+            return sum;
+        }
+
+
+
 
         if (expression.contains(" * ") && expression.contains(" + ")) {
             String[] expressionBits = expression.split(" \\+ ");
@@ -27,7 +42,7 @@ public class Calc {
             return product;
         }
 
-        expression = expression.replace(" - ", " + -");
+
 
         String[] expressionBits = expression.split(" \\+ ");
 
@@ -36,6 +51,25 @@ public class Calc {
                 .sum();
 
         return sum;
+    }
+
+    private static String[] splitTwoParts(String expression) {
+        int bracketDepth = 0;
+
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+
+            if (bracketDepth == 0 && c == '+') {
+                return new String[] {
+                        expression.substring(0, i), expression.substring(i + 1)
+                };
+            } else if (c == '(') {
+                bracketDepth++;
+            } else if (c == ')') {
+                bracketDepth--;
+            }
+        }
+        throw new IllegalArgumentException("Invalid expression: " + expression);
     }
 
     private static String removeUnnecessaryBrackets(String expression) {
