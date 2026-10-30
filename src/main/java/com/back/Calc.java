@@ -9,6 +9,12 @@ public class Calc {
         return _run(expression, 0);
     }
 
+    private static void printRsOnDebugMode(int rs, int depth) {
+        if (isDebug) {
+            System.out.println(" ".repeat(depth) + "rs[" + depth + "] = " + rs);
+        }
+    }
+
     public static int _run(String expression, int depth) {
         expression = expression.trim();
 
@@ -27,13 +33,21 @@ public class Calc {
             String[] expressionBits = splitTwoPartsBy(expression, '+');
 
             if  (expressionBits != null) {
-                return _run(expressionBits[0], depth + 1) + _run(expressionBits[1], depth + 1);
+                int rs = _run(expressionBits[0], depth + 1) + _run(expressionBits[1], depth + 1);
+
+                printRsOnDebugMode(rs, depth);
+
+                return rs;
             }
 
             expressionBits = splitTwoPartsBy(expression, '*');
 
             if (expressionBits != null) {
-                return _run(expressionBits[0], depth + 1) * _run(expressionBits[1], depth + 1);
+                int rs = _run(expressionBits[0], depth + 1) * _run(expressionBits[1], depth + 1);
+
+                printRsOnDebugMode(rs, depth);
+
+                return rs;
             }
             throw new IllegalArgumentException("Invalid expression: " + expression);
         }
@@ -41,27 +55,39 @@ public class Calc {
         if (expression.contains(" * ") && expression.contains(" + ")) {
             String[] expressionBits = expression.split(" \\+ ");
 
-            return Arrays.stream(expressionBits)
+            int rs = Arrays.stream(expressionBits)
                     .map(exprBit -> _run(exprBit, depth + 1))
                     .reduce(Integer::sum)
                     .orElse(0);
+
+            printRsOnDebugMode(rs, depth);
+
+            return rs;
         }
 
         if (expression.contains(" * ")) {
             String[] expressionBits = expression.split(" \\* ");
 
-            return Arrays.stream(expressionBits)
+            int rs = Arrays.stream(expressionBits)
                     .map(Integer::parseInt)
                     .reduce((a, b) -> a * b)
                     .orElse(0);
+
+            printRsOnDebugMode(rs, depth);
+
+            return rs;
         }
 
         String[] expressionBits = expression.split(" \\+ ");
 
-        return Arrays.stream(expressionBits)
+        int rs = Arrays.stream(expressionBits)
                 .map(Integer::parseInt)
                 .reduce(Integer::sum)
                 .orElse(0);
+
+        printRsOnDebugMode(rs, depth);
+
+        return rs;
     }
 
     private static String[] splitTwoPartsBy(String expression, char splitBy) {
