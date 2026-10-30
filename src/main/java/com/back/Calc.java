@@ -9,17 +9,28 @@ public class Calc {
         expression = expression.replace(" - ", " + -");
 
         if (expression.contains("(")) {
-            String[] expressionBits = splitTwoParts(expression);
+            String[] expressionBits = splitTwoPartsBy(expression, '+');
 
-            int sum = Arrays.stream(expressionBits)
-                    .map(Calc::run) // run 재귀호출
-                    .reduce(Integer::sum)
-                    .orElse(0);
-            return sum;
+            if  (expressionBits != null) {
+                int sum = Arrays.stream(expressionBits)
+                        .map(Calc::run) // run 재귀호출
+                        .reduce(Integer::sum)
+                        .orElse(0);
+                return sum;
+            }
+
+            expressionBits = splitTwoPartsBy(expression, '*');
+
+            if (expressionBits != null) {
+                int product = Arrays.stream(expressionBits)
+                        .map(Calc::run)
+                        .reduce((a, b) -> a * b)
+                        .orElse(0);
+
+                return product;
+            }
+            throw new IllegalArgumentException("Invalid expression: " + expression);
         }
-
-
-
 
         if (expression.contains(" * ") && expression.contains(" + ")) {
             String[] expressionBits = expression.split(" \\+ ");
@@ -42,8 +53,6 @@ public class Calc {
             return product;
         }
 
-
-
         String[] expressionBits = expression.split(" \\+ ");
 
         int sum = Arrays.stream(expressionBits)
@@ -53,13 +62,13 @@ public class Calc {
         return sum;
     }
 
-    private static String[] splitTwoParts(String expression) {
+    private static String[] splitTwoPartsBy(String expression, char splitBy) {
         int bracketDepth = 0;
 
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
 
-            if (bracketDepth == 0 && c == '+') {
+            if (bracketDepth == 0 && c == splitBy) {
                 return new String[] {
                         expression.substring(0, i), expression.substring(i + 1)
                 };
@@ -69,7 +78,7 @@ public class Calc {
                 bracketDepth--;
             }
         }
-        throw new IllegalArgumentException("Invalid expression: " + expression);
+        return null;
     }
 
     private static String removeUnnecessaryBrackets(String expression) {
